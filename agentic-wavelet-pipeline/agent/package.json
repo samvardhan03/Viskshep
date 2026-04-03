@@ -1,0 +1,31 @@
+{
+    "name": "agentic-wavelet-orchestrator",
+    "version": "0.1.0",
+    "description": "Terminal-native autonomous MLOps agent for the Agentic-Wavelet Foundation Pipeline. Orchestrates EEG signal preprocessing via MCP-connected Python tools.",
+    "module": "src/main.ts",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "dev": "bun run --watch src/main.ts",
+        "start": "bun run src/main.ts",
+        "build": "bun build src/main.ts --outdir dist --target bun --minify",
+        "typecheck": "tsc --noEmit",
+        "lint": "bunx biome check --apply src/"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.10.0",
+        "commander": "^14.0.3",
+        "ink": "^5.1.0",
+        "react": "^18.3.1",
+        "zod": "^3.23.0"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^1.9.0",
+        "@types/react": "^18.3.0",
+        "bun-types": "latest",
+        "typescript": "^5.4.0"
+    },
+    "trustedDependencies": [
+        "@biomejs/biome"
+    ]
+}

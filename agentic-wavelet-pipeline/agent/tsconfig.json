@@ -1,0 +1,62 @@
+{
+    "compilerOptions": {
+        // ── Target & Module ─────────────────────────────────────────────────────
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler", // Bun-native module resolution strategy
+        "lib": [
+            "ESNext"
+        ],
+        // ── Path aliases — add as the project grows ─────────────────────────────
+        "baseUrl": "./src",
+        "paths": {
+            "@ui/*": [
+                "ui/*"
+            ],
+            "@query/*": [
+                "query/*"
+            ],
+            "@coordinator/*": [
+                "coordinator/*"
+            ],
+            "@mcp/*": [
+                "mcp/*"
+            ],
+            "@tools/*": [
+                "tools/*"
+            ],
+            "@memory/*": [
+                "memory/*"
+            ]
+        },
+        // ── Strict type-safety ──────────────────────────────────────────────────
+        "strict": true,
+        "noUncheckedIndexedAccess": true, // catches implicit undefined on array access
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "exactOptionalPropertyTypes": true,
+        // ── Emit ────────────────────────────────────────────────────────────────
+        "noEmit": true, // Bun handles transpilation; tsc is type-check only
+        "declaration": false,
+        "sourceMap": true,
+        // ── Interop ─────────────────────────────────────────────────────────────
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true, // required for fast single-file transpilation
+        // ── JSX — required for React/Ink terminal components ───────────────────
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+        // ── Type roots ──────────────────────────────────────────────────────────
+        "types": [
+            "bun-types"
+        ]
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

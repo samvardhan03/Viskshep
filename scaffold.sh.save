@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Agentic-Wavelet Foundation Pipeline — Universal Scaffold Script
+# Run from any parent directory: bash scaffold.sh
+# =============================================================================
+set -euo pipefail
+
+ROOT="agentic-wavelet-pipeline"
+
+echo "▶ Creating monorepo root: ${ROOT}/"
+mkdir -p "${ROOT}"
+cd "${ROOT}"
+
+# ── Top-level files ───────────────────────────────────────────────────────────
+touch .gitignore
+touch README.md
+touch docker-compose.yml          # future: wire agent + wst mcp server containers
+
+# ── agent/ — Bun / TypeScript / React-Ink orchestrator ───────────────────────
+echo "▶ Scaffolding agent/"
+mkdir -p agent/src/{ui,query,coordinator,mcp,tools,memory}
+
+touch agent/package.json
+touch agent/tsconfig.json
+touch agent/bunfig.toml            # Bun-specific config (registry, preload, etc.)
+
+touch agent/src/main.ts
+
+# UI layer — React/Ink terminal components
+touch agent/src/ui/App.tsx
+touch agent/src/ui/ProgressBar.tsx
+touch agent/src/ui/ApprovalDialog.tsx
+touch agent/src/ui/MetricPanel.tsx
+
+# QueryEngine — LLM loop, streaming, context compression
+touch agent/src/query/QueryEngine.ts
+touch agent/src/query/ContextCompressor.ts
+touch agent/src/query/TokenEstimator.ts
+
+# Multi-agent coordinator — DAG decomposition, swarm
+touch agent/src/coordinator/Coordinator.ts
+touch agent/src/coordinator/SubAgent.ts
+touch agent/src/coordinator/MessageBus.ts
+
+# MCP bridge — protocol layer, Zod schemas
+touch agent/src/mcp/McpClient.ts
+touch agent/src/mcp/schemas.ts     # Zod schemas for all MCP tool I/O
+
+# Tool definitions
+touch agent/src/tools/ExecuteWSTTool.ts
+touch agent/src/tools/DatasetSplitterTool.ts
+touch agent/src/tools/ArtifactRejectionTool.ts
+touch agent/src/tools/TribeInferenceTool.ts
+
+# Persistent memory / daemon
+touch agent/src/memory/MemoryStore.ts
+touch agent/src/memory/DaemonConsolidator.ts
+
+# ── open-source-wst/ — Python PyPI package ───────────────────────────────────
+echo "▶ Scaffolding open-source-wst/"
+PKG="open-source-wst"
+mkdir -p "${PKG}/src/transient_wst"
+mkdir -p "${PKG}/tests"
+mkdir -p "${PKG}/docs"
+
+touch "${PKG}/pyproject.toml"
+touch "${PKG}/README.md"
+touch "${PKG}/.python-version"      # pin Python version (e.g., 3.11)
+touch "${PKG}/.gitignore"
+
+# Core package modules
+touch "${PKG}/src/transient_wst/__init__.py"
+touch "${PKG}/src/transient_wst/core.py"        # WaveletScatteringExtractor
+touch "${PKG}/src/transient_wst/reduction.py"   # PCA dimensionality reduction
+touch "${PKG}/src/transient_wst/io.py"           # EDF / FIF / NumPy loaders
+touch "${PKG}/src/transient_wst/mcp_server.py"  # MCP server entry-point
+touch "${PKG}/src/transient_wst/utils.py"        # helpers / logging
+
+# Tests
+touch "${PKG}/tests/__init__.py"
+touch "${PKG}/tests/test_scattering.py"          # Lipschitz continuity, tensor shapes
+touch "${PKG}/tests/test_reduction.py"
+touch "${PKG}/tests/test_io.py"
+touch "${PKG}/tests/conftest.py"                 # shared fixtures
+
+echo ""
+echo "✅  Scaffold complete. Tree:"
+find . -not -path '*/.git/*' | sort | sed 's|[^/]*/|  |
+
+chmod +x scaffold.sh.
+./scaffold.sh
+
+

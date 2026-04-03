@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# ── PEP 621 project metadata ───────────────────────────────────────────────────
+[project]
+name = "transient-wst"
+version = "0.1.0"
+description = "Enterprise-grade Wavelet Scattering Transform engine for non-stationary time-series analysis. Designed as an MCP-compatible scientific processing backend."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+keywords = ["wavelet", "scattering-transform", "eeg", "neuroscience", "signal-processing", "mcp"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+# ── Runtime dependencies ───────────────────────────────────────────────────────
+dependencies = [
+    "numpy>=1.26,<3",
+    "scipy>=1.13,<2",
+    "kymatio>=0.3.0",
+    "scikit-learn>=1.5,<2",
+    "mcp>=1.0.0",          # Model Context Protocol SDK for server exposition
+]
+
+# ── Optional / development extras ─────────────────────────────────────────────
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.4",           # linting + formatting
+    "mypy>=1.10",
+]
+gpu = [
+    "torch>=2.3",          # enables Kymatio GPU backend
+]
+
+# ── Entry points ───────────────────────────────────────────────────────────────
+[project.scripts]
+transient-wst-server = "transient_wst.mcp_server:main"
+
+# ── Hatchling build — src layout ──────────────────────────────────────────────
+[tool.hatch.build.targets.wheel]
+packages = ["src/transient_wst"]
+
+# ── Ruff linter config ────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+# ── Mypy strict type checking ─────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
+
+# ── Pytest ─────────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--tb=short -v"
