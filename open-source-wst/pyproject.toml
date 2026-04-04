@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 # ── PEP 621 project metadata ───────────────────────────────────────────────────
 [project]
-name = "transient-wst"
+name = "omnipulse"
 version = "0.1.0"
 description = "Enterprise-grade Wavelet Scattering Transform engine for non-stationary time-series analysis. Designed as an MCP-compatible scientific processing backend."
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+authors = [{ name = "Samvardhan Singh" }]
 keywords = ["wavelet", "scattering-transform", "time-series", "signal-processing", "mcp", "anomaly-detection"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -50,7 +50,7 @@ foundation = [
 
 # ── Entry points ───────────────────────────────────────────────────────────────
 [project.scripts]
-transient-wst-server = "transient_wst.mcp_server:main"
+omnipulse-server = "transient_wst.mcp_server:main"
 
 # ── Hatchling build — src layout ──────────────────────────────────────────────
 [tool.hatch.build.targets.wheel]
