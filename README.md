@@ -3,7 +3,6 @@
 <div align="center">
   <p><strong>Vectorized Invariant Kernels for Scattering & High-performance Extraction Pipelines</strong></p>
   <img src="https://img.shields.io/badge/License-Apache_2.0-teal.svg" alt="License: Apache 2.0">
-  <img src="https://img.shields.io/badge/Commercial_License-OmniPulse_Enterprise-indigo.svg" alt="License: Commercial">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+">
   <img src="https://img.shields.io/badge/CUDA-11.8%2B-green.svg" alt="CUDA 11.8+">
 </div>
