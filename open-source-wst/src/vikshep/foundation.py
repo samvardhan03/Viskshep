@@ -1,5 +1,5 @@
 """
-transient_wst.foundation
+vikshep.foundation
 =========================
 PyTorch stub for Time-Frequency Consistency (TF-C) contrastive alignment.
 

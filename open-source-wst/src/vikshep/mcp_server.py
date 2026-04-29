@@ -1,6 +1,6 @@
 """
-transient_wst.mcp_server
-========================
+vikshep.mcp_server
+===================
 Model Context Protocol (MCP) server exposing the Wavelet Scattering
 Transform pipeline as a tool callable by the TypeScript agentic orchestrator.
 
@@ -25,15 +25,15 @@ from pathlib import Path
 import numpy as np
 from mcp.server.fastmcp import FastMCP
 
-from transient_wst.core import WaveletScatteringExtractor
-from transient_wst.io import load_npy_directory, save_arrays
-from transient_wst.reduction import PCAReducer
-from transient_wst.utils import detect_outlier_paths
+from vikshep.core import WaveletScatteringExtractor
+from vikshep.io import load_npy_directory, save_arrays
+from vikshep.reduction import PCAReducer
+from vikshep.utils import detect_outlier_paths
 
 logger = logging.getLogger(__name__)
 
 # ── MCP Server instance ───────────────────────────────────────────────────
-mcp = FastMCP("transient-wst")
+mcp = FastMCP("vikshep")
 
 
 @mcp.tool()

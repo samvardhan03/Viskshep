@@ -1,5 +1,5 @@
 """
-transient_wst.reduction
+vikshep.reduction
 =======================
 Dimensionality reduction of Wavelet Scattering coefficient tensors via
 Principal Component Analysis (PCA).
@@ -38,7 +38,7 @@ class PCAReducer:
     Examples
     --------
     >>> import numpy as np
-    >>> from transient_wst.reduction import PCAReducer
+    >>> from vikshep.reduction import PCAReducer
     >>> coeffs = np.random.randn(4, 120, 16).astype(np.float32)
     >>> reducer = PCAReducer(variance_threshold=0.95)
     >>> reduced = reducer.fit_transform(coeffs)

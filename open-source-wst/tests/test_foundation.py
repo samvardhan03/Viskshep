@@ -15,7 +15,7 @@ from __future__ import annotations
 import pytest
 import torch
 
-from transient_wst.foundation import (
+from vikshep.foundation import (
     MLPProjector,
     TFCContrastiveLoss,
     TFCModule,
