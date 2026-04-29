@@ -18,9 +18,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from transient_wst.core import WaveletScatteringExtractor, ScatteringResult
-from transient_wst.reduction import PCAReducer
-from transient_wst.utils import (
+from vikshep.core import WaveletScatteringExtractor, ScatteringResult
+from vikshep.reduction import PCAReducer
+from vikshep.utils import (
     compute_snr_db,
     compute_variance_per_path,
     count_anomalous_values,

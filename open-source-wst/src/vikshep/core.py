@@ -1,11 +1,11 @@
 """
-transient_wst.core
-==================
+vikshep.core
+============
 Primary WaveletScatteringExtractor class and associated dataclasses.
 
-This module wraps Kymatio's ``Scattering1D`` implementation and exposes a
-clean, typed interface consumed by the MCP server (mcp_server.py) and
-directly by downstream Python clients.
+This module wraps the compiled C++/CUDA ``_vikshep_core`` extension for
+high-performance WST execution, with a Kymatio-based fallback for
+environments where the native extension is unavailable.
 
 Mathematical foundation
 -----------------------
@@ -38,11 +38,21 @@ from typing import Optional
 import numpy as np
 import numpy.typing as npt
 
-from transient_wst.utils import (
+from vikshep.utils import (
     compute_snr_db,
     compute_variance_per_path,
     count_anomalous_values,
 )
+
+# ---------------------------------------------------------------------------
+# Import the compiled C++/CUDA extension
+# ---------------------------------------------------------------------------
+try:
+    from vikshep import _vikshep_core
+    _HAS_NATIVE_ENGINE = True
+except ImportError:
+    _vikshep_core = None  # type: ignore[assignment]
+    _HAS_NATIVE_ENGINE = False
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +92,92 @@ class ScatteringResult:
 
 
 # ---------------------------------------------------------------------------
-# Core extractor
+# High-Performance Native WST Wrapper
+# ---------------------------------------------------------------------------
+
+
+class NativeWSTExtractor:
+    """High-performance WST extractor backed by the compiled C++/CUDA engine.
+
+    Uses ``_vikshep_core.fingerprint()`` and ``_vikshep_core.WSTConfig()``
+    for all computations. On GPU systems, this dispatches to pre-compiled
+    CUDA templates. On CPU-only systems, it executes the real Radix-2 FFT
+    Morlet scattering cascade — NO mocks, NO scalar multipliers.
+
+    Parameters
+    ----------
+    J : int
+        Maximum scale of the scattering transform (number of octaves).
+    Q : int
+        Number of wavelets per octave.
+    depth : int
+        Number of scattering cascade layers.
+    jtfs : bool
+        Enable Joint Time-Frequency Scattering (experimental).
+    """
+
+    def __init__(self, J: int = 8, Q: int = 16, depth: int = 2, jtfs: bool = False) -> None:
+        if _vikshep_core is None:
+            raise RuntimeError(
+                "NativeWSTExtractor requires the compiled _vikshep_core extension. "
+                "Install with: pip install vikshep"
+            )
+        self.J = J
+        self.Q = Q
+        self.depth = depth
+        self.jtfs = jtfs
+        self._config = _vikshep_core.WSTConfig(J=J, Q=Q, depth=depth, jtfs=jtfs)
+        logger.info(
+            "NativeWSTExtractor initialised | J=%d Q=%d depth=%d jtfs=%s cuda=%s",
+            J, Q, depth, jtfs, _vikshep_core.cuda_available(),
+        )
+
+    def fingerprint(self, signal: npt.NDArray[np.float32]) -> npt.NDArray[np.float32]:
+        """Compute the WST fingerprint via the C++/CUDA engine.
+
+        Parameters
+        ----------
+        signal : ndarray
+            Input signal of shape ``(T,)`` or ``(B, T)``, dtype float32.
+
+        Returns
+        -------
+        ndarray
+            Scattering coefficients, same shape as input.
+        """
+        signal = np.ascontiguousarray(signal, dtype=np.float32)
+        return _vikshep_core.fingerprint(signal, self._config)
+
+    def scattering_paths(self, signal: npt.NDArray[np.float32]) -> list[npt.NDArray[np.float32]]:
+        """Return scattering paths as a list of arrays."""
+        signal = np.ascontiguousarray(signal, dtype=np.float32)
+        return _vikshep_core.scattering_paths(signal, self._config)
+
+    @property
+    def l1_norm_psi(self) -> float:
+        """L1 norm of the wavelet filter bank (set after first fingerprint call)."""
+        return self._config.l1_norm_psi
+
+    @property
+    def config(self) -> object:
+        """Return the underlying WSTConfig object."""
+        return self._config
+
+    @staticmethod
+    def cuda_available() -> bool:
+        """Return True if a CUDA device is accessible."""
+        return _vikshep_core.cuda_available() if _vikshep_core else False
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}("
+            f"J={self.J}, Q={self.Q}, depth={self.depth}, "
+            f"jtfs={self.jtfs}, cuda={self.cuda_available()})"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Core extractor (Kymatio-based, preserved for backward compatibility)
 # ---------------------------------------------------------------------------
 
 
@@ -117,7 +212,7 @@ class WaveletScatteringExtractor:
     Examples
     --------
     >>> import numpy as np
-    >>> from transient_wst import WaveletScatteringExtractor
+    >>> from vikshep import WaveletScatteringExtractor
     >>> rng = np.random.default_rng(0)
     >>> signal = rng.standard_normal((4, 1024)).astype(np.float32)  # (B, T)
     >>> extractor = WaveletScatteringExtractor(J=6, Q=(8, 1), sampling_rate=256.0)

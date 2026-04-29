@@ -1,5 +1,5 @@
 """
-transient_wst.utils
+vikshep.utils
 ===================
 Shared numerical helpers for SNR computation and anomaly detection.
 
